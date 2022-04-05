@@ -1,6 +1,12 @@
 # Extremely Simple Storage
 A Java library for saving data in an extremely simple way.
 
+## UPDATE
+Version 1.1 includes api breaking changes, currently this is just a refactor in to a new package structure
+however in the future may include other changes!
+
+Click [HERE](https://github.com/ShadowChild/Extremely-Simple-Storage/tree/master) to view stable branch
+
 ## Source Code
 The latest source code for this project can be found on [GitHub](https://github.com/ShadowChild/Extremely-Simple-Storage). 
 If you are using Git, you can clone the project using the following command `git clone https://github.com/ShadowChild/Extremely-Simple-Storage`.
