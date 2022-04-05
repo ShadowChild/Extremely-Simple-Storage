@@ -1,106 +1,60 @@
-import groovy.json.JsonSlurper
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
-    }
+plugins {
+
+    id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'maven-publish'
-apply plugin: 'org.sonarqube'
 
-version = "${project_version}." + getBuildNumber()
-group = "${project_group}"
-archivesBaseName = "${project_name}"
-
-class Secrets {
-    def data = null
-
-    def getProperty(String key) {
-        return data ? data[key] : ''
-    }
-}
-
-
-def secretFile
-if (System.getenv().SECRET_FILE) {
-    secretFile = file System.getenv().SECRET_FILE
-} else {
-    secretFile = file 'secret.json'
-}
-
-project.ext.secret = new Secrets()
-if (secretFile.exists()) {
-    secretFile.withReader {
-        project.ext.secret.data = new JsonSlurper().parse it
-    }
-}
-
-String getBuildNumber() {
-    return System.getenv('BUILD_NUMBER') ?: System.getenv('TRAVIS_BUILD_NUMBER') ?: '0';
-}
-
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
+group 'co.uk.innoxium.util'
+version '1.0'
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
+
     classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
+
     classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
-artifacts {
-    archives sourcesJar, javadocJar
+tasks.withType(Javadoc) {
+
+    failOnError false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
 }
+
+jar.finalizedBy javadocJar
+jar.finalizedBy sourcesJar
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            from components.java
 
-            artifact sourcesJar {
-                classifier 'sources'
-            }
-            artifact javadocJar {
-                classifier 'javadoc'
-            }
+    publications {
+
+        SwingPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId project_group
+            artifactId project_name
+            version project_version
         }
     }
     repositories {
-        maven {
-            credentials {
-                username secret.username
-                password secret.password
-            }
-            url secret.url
-        }
-    }
-}
 
-sonarqube {
-    properties {
-        property 'sonar.host.url', secret.sonarHost
-        property 'sonar.organization', secret.sonarOrganization
-        property 'sonar.login', secret.sonarToken
-        property 'sonar.projectName', project.archivesBaseName
-        property 'sonar.projectKey', "$project.group:$project.archivesBaseName"
+        maven {
+
+            url "https://repo.repsy.io/mvn/innoxium/innoxium"
+            credentials {
+
+                username "nope"
+                password "nope"
+            }
+        }
     }
 }
