@@ -1,7 +1,7 @@
-package net.darkhax.esstest;
+package uk.co.innoxium.util.ess;
 
-import net.darkhax.ess.DataCompound;
-import net.darkhax.ess.ESSHelper;
+import uk.co.innoxium.util.ess.DataCompound;
+import uk.co.innoxium.util.ess.ESSHelper;
 
 public class ESSTest {
     

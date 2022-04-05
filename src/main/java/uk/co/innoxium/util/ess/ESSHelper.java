@@ -1,4 +1,4 @@
-package net.darkhax.ess;
+package uk.co.innoxium.util.ess;
 
 import java.io.File;
 import java.io.FileInputStream;
